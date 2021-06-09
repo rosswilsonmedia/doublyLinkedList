@@ -7,10 +7,13 @@ class DLNode:
 class DList:
     def __init__(self):
         self.head = None
+        self.tail = None
     def add_to_front(self, val):
         new_node=DLNode(val)
-        new_node.next=self.head
-        if self.head!=None:
+        if self.tail==None:
+            self.tail=new_node
+        else:
+            new_node.next=self.head
             self.head.previous=new_node
         self.head=new_node
         return self
@@ -18,6 +21,8 @@ class DList:
         runner=self.head
         while runner!=None:
             print(runner.value)
+            # print(f"head {self.head.value}")
+            # print(f"tail {self.tail.value}")
             # if runner.previous!=None:
             #     print(f"prev node val: {runner.previous.value}")
             # else:
@@ -30,37 +35,40 @@ class DList:
         return self
     def add_to_back(self, val):
         new_node=DLNode(val)
-        runner=self.head
-        while runner.next!=None:
-            runner=runner.next
-        runner.next=new_node
-        new_node.previous=runner
+        if self.head==None:
+            self.head=new_node
+        else:
+            new_node.previous=self.tail
+            self.tail.next=new_node
+        self.tail=new_node
         return self
     def remove_from_front(self):
-        self.head=self.head.next
-        self.head.previous=None
+        if self.head!=None:
+            self.head=self.head.next
+            self.head.previous=None
         return self
     def remove_from_back(self):
-        last_node=self.head
-        while last_node.next.next!=None:
-            last_node=last_node.next
-        last_node.next=None
+        if self.tail!=None:
+            self.tail=self.tail.previous
+            self.tail.next=None
         return self
     def remove_val(self, val):
-        if self.head.value==val:
+        if self.head!=None and self.head.value==val:
             self.remove_from_front()
-        else:
+        elif self.head!=None:
             runner=self.head
             while runner.next.value!=val and runner.next.next!=None:
                 runner=runner.next
-            if runner.next.value==val:
+            if runner.next.value==val and runner.next.next!=None:
                 runner.next.next.previous=runner
                 runner.next=runner.next.next
+            elif runner.next.value==val and runner.next.next==None:
+                self.remove_from_back()
         return self
     def insert_at(self,val,n):
         if n==0:
             self.add_to_front(val)
-        elif n>0:
+        elif n>0 and self.head!=None and self.tail!=None:
             insert_node=self.head
             index=0
             while n!=index+1 and insert_node.next!=None:
@@ -75,12 +83,9 @@ class DList:
                 insert_node.next.next=next_node
                 insert_node.next.previous=prev_node
                 insert_node.next.next.previous=insert_node.next
+        else:
+            self.add_to_front(val)
         return self
 
-my_list = DList()
-my_list.add_to_front("Jim")
-my_list.add_to_front("Dwight")
-my_list.add_to_front("Andy")
-
 my_list2 = DList()
-my_list2.add_to_front("are").add_to_front("Linked lists").add_to_back("fun!").add_to_back('extra').add_to_back('stuff').remove_val('abcd').insert_at('abcd', 4).print_values()
+my_list2.add_to_front("are").add_to_front("Linked lists").add_to_back("fun!").add_to_back('extra').add_to_back('stuff').remove_val('abcd').insert_at('abcd', 76).remove_from_back().print_values()
